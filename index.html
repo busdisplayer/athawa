@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carte Interactive - Ville Fictive</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+        canvas {
+            border: 2px solid black;
+            background-color: #f8f8f8;
+            cursor: grab;
+        }
+    </style>
+</head>
+<body>
+    <h2>Carte Interactive - Ville Fictive</h2>
+    <canvas id="mapCanvas" width="800" height="600"></canvas>
+    
+    <script>
+        const canvas = document.getElementById("mapCanvas");
+        const ctx = canvas.getContext("2d");
+
+        let scale = 1;
+        let offsetX = 0, offsetY = 0;
+        let isDragging = false;
+        let lastMouseX, lastMouseY;
+
+        const points = [
+            { x: 100, y: 300, name: "Gare Centrale", color: "blue" },
+            { x: 400, y: 100, name: "Mairie", color: "red" },
+            { x: 600, y: 400, name: "Bibliothèque", color: "red" }
+        ];
+
+        const parcs = [
+            [{ x: 250, y: 200 }, { x: 350, y: 180 }, { x: 370, y: 260 }, { x: 280, y: 280 }]
+        ];
+
+        const lignes = [
+            { name: "Ligne Rouge", color: "red", width: 5, path: [{ x: 100, y: 300 }, { x: 400, y: 100 }, { x: 600, y: 400 }] },
+            { name: "Ligne Bleue", color: "blue", width: 3, path: [{ x: 200, y: 500 }, { x: 400, y: 100 }, { x: 700, y: 300 }] }
+        ];
+
+        function drawPoint(x, y, color) {
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.arc(x, y, 8, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = "black";
+            ctx.stroke();
+        }
+
+        function drawLine(path, color, width) {
+            ctx.strokeStyle = color;
+            ctx.lineWidth = width;
+            ctx.beginPath();
+            ctx.moveTo(path[0].x, path[0].y);
+            for (let i = 1; i < path.length; i++) {
+                ctx.lineTo(path[i].x, path[i].y);
+            }
+            ctx.stroke();
+        }
+
+        function drawPolygon(points, fillColor) {
+            ctx.fillStyle = fillColor;
+            ctx.beginPath();
+            ctx.moveTo(points[0].x, points[0].y);
+            for (let i = 1; i < points.length; i++) {
+                ctx.lineTo(points[i].x, points[i].y);
+            }
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        function drawMap() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.save();
+            ctx.translate(offsetX, offsetY);
+            ctx.scale(scale, scale);
+
+            parcs.forEach(parc => drawPolygon(parc, "lightgreen"));
+            lignes.forEach(ligne => drawLine(ligne.path, ligne.color, ligne.width));
+            points.forEach(point => drawPoint(point.x, point.y, point.color));
+
+            ctx.fillStyle = "black";
+            ctx.font = "14px Arial";
+            points.forEach(point => {
+                ctx.fillText(point.name, point.x + 10, point.y - 10);
+            });
+
+            ctx.restore();
+        }
+
+        function isMouseNearLine(mouseX, mouseY, path) {
+            for (let i = 0; i < path.length - 1; i++) {
+                let x1 = path[i].x, y1 = path[i].y;
+                let x2 = path[i + 1].x, y2 = path[i + 1].y;
+
+                let A = mouseX - x1;
+                let B = mouseY - y1;
+                let C = x2 - x1;
+                let D = y2 - y1;
+
+                let dot = A * C + B * D;
+                let len_sq = C * C + D * D;
+                let param = len_sq !== 0 ? dot / len_sq : -1;
+
+                let closestX, closestY;
+                if (param < 0) {
+                    closestX = x1;
+                    closestY = y1;
+                } else if (param > 1) {
+                    closestX = x2;
+                    closestY = y2;
+                } else {
+                    closestX = x1 + param * C;
+                    closestY = y1 + param * D;
+                }
+
+                let distance = Math.sqrt((mouseX - closestX) ** 2 + (mouseY - closestY) ** 2);
+                if (distance < 5) return true;
+            }
+            return false;
+        }
+
+        canvas.addEventListener("wheel", (event) => {
+            event.preventDefault();
+            let zoomFactor = 1.1;
+            let zoomDirection = event.deltaY > 0 ? 1 / zoomFactor : zoomFactor;
+            let mouseX = (event.offsetX - offsetX) / scale;
+            let mouseY = (event.offsetY - offsetY) / scale;
+
+            scale *= zoomDirection;
+            offsetX = event.offsetX - mouseX * scale;
+            offsetY = event.offsetY - mouseY * scale;
+
+            drawMap();
+        });
+
+        canvas.addEventListener("mousedown", (event) => {
+            isDragging = true;
+            lastMouseX = event.clientX;
+            lastMouseY = event.clientY;
+            canvas.style.cursor = "grabbing";
+        });
+
+        canvas.addEventListener("mousemove", (event) => {
+            let mouseX = (event.offsetX - offsetX) / scale;
+            let mouseY = (event.offsetY - offsetY) / scale;
+
+            let hoverText = "";
+
+            lignes.forEach(ligne => {
+                if (isMouseNearLine(mouseX, mouseY, ligne.path)) {
+                    hoverText = ligne.name;
+                }
+            });
+
+            points.forEach(point => {
+                let distance = Math.sqrt((mouseX - point.x) ** 2 + (mouseY - point.y) ** 2);
+                if (distance < 10) {
+                    hoverText = point.name;
+                }
+            });
+
+            if (isDragging) {
+                let dx = event.clientX - lastMouseX;
+                let dy = event.clientY - lastMouseY;
+                offsetX += dx;
+                offsetY += dy;
+                lastMouseX = event.clientX;
+                lastMouseY = event.clientY;
+            }
+
+            drawMap();
+
+            if (hoverText) {
+                ctx.save();
+                ctx.translate(offsetX, offsetY);
+                ctx.scale(scale, scale);
+                ctx.fillStyle = "black";
+                ctx.font = "16px bold Arial";
+                ctx.fillText(hoverText, mouseX + 10, mouseY - 10);
+                ctx.restore();
+            }
+        });
+
+        canvas.addEventListener("mouseup", () => {
+            isDragging = false;
+            canvas.style.cursor = "grab";
+        });
+
+        drawMap();
+    </script>
+</body>
+</html>
