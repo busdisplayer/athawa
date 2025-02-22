@@ -33,33 +33,42 @@
     { x: 100, y: 300, name: "Gare Centrale", color: "blue" },
     { x: 400, y: 100, name: "Hôtel de Ville", color: "red" },
     { x: 600, y: 400, name: "Bibliothèque", color: "red" },
-    { x: 200, y: 500, name: "Université", color: "red" },
+    { x: 250, y: 500, name: "Université", color: "red" },
     { x: 500, y: 550, name: "Musée d'Art", color: "red" },
-    { x: 750, y: 350, name: "Opéra", color: "red" },
-    { x: 50, y: 200, name: "Stade", color: "red" },
+    { x: 800, y: 350, name: "Opéra", color: "red" },
+    { x: 50, y: 200, name: "Stade National", color: "red" },
     { x: 900, y: 600, name: "Gare du Nord", color: "blue" },
     { x: 300, y: 250, name: "Théâtre", color: "red" },
     { x: 700, y: 450, name: "Centre Commercial", color: "red" },
     { x: 450, y: 700, name: "Aéroport", color: "blue" },
-    { x: 800, y: 100, name: "Hôpital", color: "red" },
+    { x: 800, y: 100, name: "Hôpital Général", color: "red" },
     { x: 600, y: 50, name: "Marché Central", color: "red" },
-    { x: 300, y: 800, name: "Parc Zoologique", color: "red" },
-    { x: 1000, y: 500, name: "Université Sud", color: "red" }
+    { x: 300, y: 800, name: "Parc Zoologique", color: "green" },
+    { x: 1000, y: 500, name: "Université Sud", color: "red" },
+    { x: 200, y: 600, name: "Quartier Résidentiel", color: "orange" },
+    { x: 500, y: 200, name: "Tour Panoramique", color: "purple" },
+    { x: 750, y: 700, name: "Port de Plaisance", color: "blue" },
+    { x: 350, y: 650, name: "Piscine Municipale", color: "cyan" },
+    { x: 850, y: 400, name: "Cinéma MegaScreen", color: "yellow" }
 ];
 
 const lignes = [
     { name: "Ligne Rouge", color: "red", width: 5, path: [{ x: 100, y: 300 }, { x: 400, y: 100 }, { x: 600, y: 400 }, { x: 900, y: 600 }] },
-    { name: "Ligne Bleue", color: "blue", width: 3, path: [{ x: 200, y: 500 }, { x: 400, y: 100 }, { x: 700, y: 450 }, { x: 1000, y: 500 }] },
+    { name: "Ligne Bleue", color: "blue", width: 3, path: [{ x: 250, y: 500 }, { x: 500, y: 200 }, { x: 750, y: 700 }, { x: 1000, y: 500 }] },
     { name: "Ligne Verte", color: "green", width: 4, path: [{ x: 50, y: 200 }, { x: 300, y: 250 }, { x: 800, y: 100 }, { x: 600, y: 50 }] },
-    { name: "Ligne Jaune", color: "yellow", width: 6, path: [{ x: 450, y: 700 }, { x: 750, y: 350 }, { x: 900, y: 600 }] },
-    { name: "Ligne Violette", color: "purple", width: 5, path: [{ x: 300, y: 800 }, { x: 600, y: 400 }, { x: 500, y: 550 }, { x: 700, y: 450 }] }
+    { name: "Ligne Jaune", color: "yellow", width: 6, path: [{ x: 450, y: 700 }, { x: 750, y: 350 }, { x: 850, y: 400 }, { x: 900, y: 600 }] },
+    { name: "Ligne Violette", color: "purple", width: 5, path: [{ x: 300, y: 800 }, { x: 500, y: 550 }, { x: 700, y: 450 }] },
+    { name: "Ligne Orange", color: "orange", width: 4, path: [{ x: 200, y: 600 }, { x: 350, y: 650 }, { x: 850, y: 400 }, { x: 1000, y: 500 }] }
 ];
 
 const parcs = [
     [{ x: 250, y: 200 }, { x: 350, y: 180 }, { x: 370, y: 260 }, { x: 280, y: 280 }],
     [{ x: 600, y: 300 }, { x: 750, y: 280 }, { x: 720, y: 400 }, { x: 620, y: 410 }],
-    [{ x: 200, y: 600 }, { x: 350, y: 580 }, { x: 300, y: 700 }, { x: 180, y: 680 }]
+    [{ x: 200, y: 600 }, { x: 350, y: 580 }, { x: 300, y: 700 }, { x: 180, y: 680 }],
+    [{ x: 800, y: 200 }, { x: 900, y: 180 }, { x: 950, y: 250 }, { x: 850, y: 270 }],
+    [{ x: 400, y: 700 }, { x: 500, y: 680 }, { x: 480, y: 750 }, { x: 350, y: 750 }]
 ];
+
 
 
         function drawPoint(x, y, color) {
